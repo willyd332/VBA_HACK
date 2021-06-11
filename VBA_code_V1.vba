@@ -1,13 +1,83 @@
 Private Sub CommandButton2_Click()
 
-'Dont add update animations
-Application.ScreenUpdating = False
+    'Block update animations
+    Application.ScreenUpdating = False
 
-'Get assumption variables
-Dim start As Integer, end As Integer
-Dim erase As String
-start = Worksheets("Assumptions").Range("O16").Value
-end = Worksheets("Assumptions").Range("O17").Value
-erase = Worksheets("Assumptions").Range("O19").Value
+    'Set assumption variables
+    Dim start As Integer
+    start = Worksheets("Assumptions").Range("O16").Value
+    
+    Dim last As Integer
+    last = Worksheets("Assumptions").Range("O17").Value
+    
+    Dim isErase As String
+    isErase = Worksheets("Assumptions").Range("O19").Value
+    
+    Set selectedLoan = Worksheets("Assumptions").Range("O14")
+    
+
+    'Set copy variables
+    Set pmtCopyRange = Worksheets("PMT").Range("K12:KU12")
+    Set forclCopyRange = Worksheets("Forcl").Range("J12:KT12")
+    Set amicCopyRange = Worksheets("Amicable").Range("J12:KT12")
+    Set servFeeCopyRange = Worksheets("Servicing Fee").Range("B4:KL4")
+    Set perfBalCopyRange = Worksheets("Performing Balance").Range("D3:KN3")
+    Set failBalCopyRange = Worksheets("Fail Balance").Range("D3:KN3")
+
+    'Set erase variables
+    Set pmtEraseRange = Worksheets("PMTOutput").Range("B2:KL1200")
+    Set forclEraseRange = Worksheets("ForclOutput").Range("B2:KL1200")
+    Set amicEraseRange = Worksheets("AmicableOutput").Range("B2:KL1200")
+    Set servFeeEraseRange = Worksheets("ServFeeOutput").Range("B2:KL1200")
+    Set perfBalEraseRange = Worksheets("PerfBalOutput").Range("B2:KL1200")
+    Set failBalEraseRange = Worksheets("FailBalOutput").Range("B2:KL1200")
+
+    'Erase everything if we want to
+    If isErase = "Y" Then
+        pmtEraseRange.Clear
+        forclEraseRange.Clear
+        amicEraseRange.Clear
+        servFeeEraseRange.Clear
+        perfBalEraseRange.Clear
+        failBalEraseRange.Clear
+
+    'Create loop
+    Dim i As Integer
+    For i = start To last
+
+        'Set selected loan
+        selectedLoan.Value = i
+
+        'Call on other macro to update values
+        CommandButton_Click()
+
+        'Set paste variables
+        Set pmtPasteRange = Worksheets("PMTOutput").Range("B" & i + 1 & ":" & "KL" & i + 1)
+        Set forclPasteRange = Worksheets("ForclOutput").Range("B" & i + 1 & ":" & "KL" & i + 1)
+        Set amicPasteRange = Worksheets("AmicableOutput").Range("B" & i + 1 & ":" & "KL" & i + 1)
+        Set servFeePasteRange = Worksheets("ServFeeOutput").Range("B" & i + 1 & ":" & "KL" & i + 1)
+        Set perfBalPasteRange = Worksheets("PerfBalOutput").Range("B" & i + 1 & ":" & "KL" & i + 1)
+        Set failBalPasteRange = Worksheets("FailBalOutput").Range("B" & i + 1 & ":" & "KL" & i + 1)
+
+        'Copy and Paste values
+        pmtCopyRange.Copy
+        pmtPasteRange.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+
+        forclCopyRange.Copy
+        forclPasteRange.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+        
+        amicCopyRange.Copy
+        amicPasteRange.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+
+        servFeeCopyRange.Copy
+        servFeePasteRange.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+
+        perfBalCopyRange.Copy
+        perfBalPasteRange.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+
+        failBalCopyRange.Copy
+        failBalPasteRange.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+
+    Next i
 
 End Sub
