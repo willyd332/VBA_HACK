@@ -15,6 +15,15 @@ Private Sub CommandButton2_Click()
     
     Set selectedLoan = Worksheets("Assumptions").Range("O14")
     
+    
+    'Status Bar
+    Dim CurrentStatus As Integer
+    Dim NumberOfBars As Integer
+    Dim pctDone As Integer
+    
+    NumberOfBars = last - start
+    Application.StatusBar = "[" & Space(NumberOfBars) & "]"
+    
 
     'Set copy variables
     Set pmtCopyRange = Worksheets("PMT").Range("K12:KU12")
@@ -40,16 +49,27 @@ Private Sub CommandButton2_Click()
         servFeeEraseRange.Clear
         perfBalEraseRange.Clear
         failBalEraseRange.Clear
-
+    End If
+    
     'Create loop
     Dim i As Integer
     For i = start To last
+    
+        'Status Bar
+        CurrentStatus = Int(((i - start) / (last - start)) * NumberOfBars)
+        pctDone = Round(CurrentStatus / NumberOfBars * 100, 0)
+        Application.StatusBar = "[" & String(CurrentStatus, "|") & _
+                            Space(NumberOfBars - CurrentStatus) & "]" & _
+                            " " & pctDone & "% Complete"
+    
+        'Make sure screen updating is off
+        Application.ScreenUpdating = False
 
         'Set selected loan
         selectedLoan.Value = i
 
         'Call on other macro to update values
-        CommandButton_Click()
+        CommandButton_Click (1)
 
         'Set paste variables
         Set pmtPasteRange = Worksheets("PMTOutput").Range("B" & i + 1 & ":" & "KL" & i + 1)
@@ -78,6 +98,9 @@ Private Sub CommandButton2_Click()
         failBalCopyRange.Copy
         failBalPasteRange.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
 
+        'Clear Status bar
+        If i = last Then Application.StatusBar = ""
+        
     Next i
 
 End Sub
