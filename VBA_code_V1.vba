@@ -16,7 +16,7 @@ Private Sub CommandButton2_Click()
     Set selectedLoan = Worksheets("Assumptions").Range("O14")
     
     
-    'Status Bar
+    'Status Bar Variables
     Dim CurrentStatus As Integer
     Dim NumberOfBars As Integer
     Dim pctDone As Integer
